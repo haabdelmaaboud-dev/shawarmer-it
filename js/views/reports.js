@@ -172,7 +172,7 @@ const ReportsView = {
       <div class="kpi"><div class="kpi-v" style="color:#C62828">${stores.length-ok}</div><div class="kpi-l">Issues</div></div>
     </div>
     <table><thead><tr><th>Branch</th><th>Engineer</th><th>Area Manager</th>
-      ${devs.map(d=>`<th>${d}</th>`).join('')}<<th>Score</th><th>Notes</th>
+      ${devs.map(d=>`<th>${d}</th>`).join('')}<th>Score</th><th>Notes</th>
     </tr></thead><tbody>
     ${stores.map(s => `<tr>
       <td><b>${s.branch}</b></td><td>${s.eng}</td><td>${s.area}</td>
@@ -207,7 +207,7 @@ const ReportsView = {
     <h1>⚠️ Shawarmer IT Issues Report</h1>
     <div class="meta">Generated: ${date} · ${stores.length} branches with issues</div>
     <table><thead><tr><th>Branch</th><th>Engineer</th><th>Area Manager</th>
-      ${devs.map(d=>`<th>${d}</th>`).join('')}<<th>Score</th><th>Status</th><th>Notes</th>
+      ${devs.map(d=>`<th>${d}</th>`).join('')}<th>Score</th><th>Status</th><th>Notes</th>
     </tr></thead><tbody>
     ${stores.map(s=>`<tr>
       <td><b>${s.branch}</b></td><td>${s.eng}</td><td>${s.area}</td>

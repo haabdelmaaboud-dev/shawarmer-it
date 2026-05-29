@@ -20,8 +20,10 @@ const APP = {
  this.showScreen("app");
  this.renderSidebar();
  this.updateUserDisplay();
+ this.loadData().then(() => {
  this.showTab(APP_CONFIG.LAST_TAB || "dashboard");
  this.startPolling();
+ });
  } else {
  this.showScreen("login");
  }

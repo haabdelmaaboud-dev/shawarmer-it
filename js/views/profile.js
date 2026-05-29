@@ -3,7 +3,7 @@
    ===================================================== */
 const ProfileView = {
   render() {
-    const u = STATE.currentUser;
+    const u = STATE.currentUser || APP.user || {};
     return `
       <div class="view-header">
         <h2 class="view-title"><i class="ti ti-user"></i> My Profile</h2>
