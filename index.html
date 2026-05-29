@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Shawarmer IT">
+  <meta name="theme-color" content="#6E0F1F">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Shawarmer IT">
+  <meta name="msapplication-TileColor" content="#6E0F1F">
+  <meta name="msapplication-navbutton-color" content="#6E0F1F">
+
+  <title>Shawarmer IT Operations</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/favicon.svg">
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- Loading Screen -->
+  <div id="screenLoading" class="screen">
+    <div class="loader-wrap">
+      <div class="loader-brand">
+        <div class="loader-logo">
+          <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="#6E0F1F"/>
+            <path d="M6 22h20v2H6zM8 10h16v10H8z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+            <circle cx="16" cy="23" r="1" fill="#fff"/>
+          </svg>
+        </div>
+        <div>
+          <div class="loader-name">Shawarmer IT</div>
+          <div class="loader-sub">Operations Command Center</div>
+        </div>
+      </div>
+      <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+      <div class="loader-msg" id="loaderMsg">Initializing systems…</div>
+    </div>
+  </div>
+
+  <!-- Login Screen -->
+  <div id="screenLogin" class="screen hidden">
+    <div class="login-page">
+      <div class="login-card">
+        <div class="login-brand">
+          <div class="login-logo">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="#6E0F1F"/>
+              <path d="M6 22h20v2H6zM8 10h16v10H8z" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+              <circle cx="16" cy="23" r="1" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="login-title">Shawarmer IT</div>
+          <div class="login-subtitle">Operations Command Center</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <div class="input-wrap">
+            <i class="ti ti-user input-icon"></i>
+            <input type="text" id="liUser" class="form-input has-icon" placeholder="Enter your username" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrap">
+            <i class="ti ti-lock input-icon"></i>
+            <input type="password" id="liPass" class="form-input has-icon" placeholder="Enter your password">
+          </div>
+        </div>
+        <div id="liErr" class="login-error"></div>
+        <button class="btn btn-brand btn-full" id="loginBtn" onclick="APP.login()">
+          <i class="ti ti-login"></i> Sign in
+        </button>
+        <div class="install-prompt" id="installPrompt" style="display:none;margin-top:16px">
+          <button class="btn btn-secondary btn-full" onclick="APP.installPWA()">
+            <i class="ti ti-download"></i> Install App
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="screenApp" class="screen hidden app-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="#fff"/>
+            <path d="M6 22h20v2H6zM8 10h16v10H8z" stroke="#6E0F1F" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+            <circle cx="16" cy="23" r="1" fill="#6E0F1F"/>
+          </svg>
+        </div>
+        <span class="sidebar-brand-text">Shawarmer</span>
+      </div>
+
+      <nav class="sidebar-nav" id="navItems"></nav>
+
+      <div class="sidebar-footer">
+        <div class="status-card">
+          <div class="status-indicator online"></div>
+          <div class="status-info">
+            <div class="status-label">System Online</div>
+            <div class="status-version">v5.1.0</div>
+          </div>
+        </div>
+        <div class="user-mini" id="sidebarUser">
+          <div class="user-mini-avatar" id="sidebarAvatar"></div>
+          <div class="user-mini-info">
+            <div class="user-mini-name" id="sidebarUserName"></div>
+            <div class="user-mini-role" id="sidebarUserRole"></div>
+          </div>
+          <button class="user-mini-logout" onclick="APP.logout()" title="Sign out">
+            <i class="ti ti-logout"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay hidden" id="sidebarOverlay" onclick="APP.toggleSidebar()"></div>
+
+    <!-- Main Content Area -->
+    <div class="main-wrap">
+      <!-- Top Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle" onclick="APP.toggleSidebar()" aria-label="Toggle menu">
+            <i class="ti ti-menu-2"></i>
+          </button>
+          <div class="greeting" id="greetingText">
+            <div class="greeting-main">Good Morning</div>
+            <div class="greeting-sub">Here's what's happening with your stores today.</div>
+          </div>
+        </div>
+        <div class="topbar-center">
+          <div class="search-bar">
+            <i class="ti ti-search"></i>
+            <input type="text" id="globalSearch" placeholder="Search stores, devices, issues…" oninput="APP.handleGlobalSearch(this.value)">
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="date-display" id="dateDisplay">
+            <div class="date-day" id="dateDay"></div>
+            <div class="date-weekday" id="dateWeekday"></div>
+          </div>
+          <button class="icon-btn" onclick="APP.toggleTheme()" id="themeBtn" title="Toggle theme">
+            <i class="ti ti-moon"></i>
+          </button>
+          <div class="notif-wrap">
+            <button class="icon-btn" onclick="APP.showNotifications()" id="notifBtn" title="Notifications">
+              <i class="ti ti-bell"></i>
+              <span class="notif-badge hidden" id="notifBadge">0</span>
+            </button>
+          </div>
+          <button class="btn btn-brand btn-start-day" id="startDayBtn" onclick="APP.startDay()">
+            <i class="ti ti-player-play"></i> Start Day
+          </button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="main-content" id="mainContent">
+        <div class="content-loading hidden" id="contentLoader">
+          <div class="spinner"></div>
+        </div>
+        <div id="contentArea"></div>
+      </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-item active" data-tab="dashboard" onclick="APP.showTab('dashboard')">
+        <i class="ti ti-layout-dashboard"></i>
+        <span>Home</span>
+      </div>
+      <div class="mobile-nav-item" data-tab="stores" onclick="APP.showTab('stores')">
+        <i class="ti ti-building-store"></i>
+        <span>Stores</span>
+      </div>
+      <div class="mobile-nav-item mobile-nav-fab" onclick="APP.quickAction()">
+        <div class="mobile-fab-inner"><i class="ti ti-plus"></i></div>
+      </div>
+      <div class="mobile-nav-item" data-tab="critical" onclick="APP.showTab('critical')">
+        <i class="ti ti-alert-triangle"></i>
+        <span>Critical</span>
+        <span class="mobile-nav-badge hidden" id="mobileCriticalBadge">0</span>
+      </div>
+      <div class="mobile-nav-item" data-tab="alerts" onclick="APP.showTab('alerts')">
+        <i class="ti ti-bell"></i>
+        <span>Alerts</span>
+        <span class="mobile-nav-badge hidden" id="mobileAlertBadge">0</span>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay hidden" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal-box" id="modalBox">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle"></h3>
+        <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <!-- Toast Stack -->
+  <div class="toast-stack" id="toastStack"></div>
+
+  <!-- Notifications Panel -->
+  <div class="notif-panel hidden" id="notifPanel">
+    <div class="notif-panel-header">
+      <span><i class="ti ti-bell"></i> Notifications</span>
+      <button onclick="NOTIF.clearAll()" class="btn-link">Clear all</button>
+    </div>
+    <div id="notifList" class="notif-list"></div>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/state.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/communication.js"></script>
+<script src="js/views/dashboard.js"></script>
+<script src="js/views/stores.js"></script>
+<script src="js/views/critical.js"></script>
+<script src="js/views/reports.js"></script>
+<script src="js/views/engineers.js"></script>
+<script src="js/views/alerts.js"></script>
+<script src="js/views/admin.js"></script>
+<script src="js/views/auditlog.js"></script>
+<script src="js/views/history.js"></script>
+<script src="js/views/profile.js"></script>
+<script src="js/modals.js"></script>
+<script src="js/app.js"></script>
+
+<!-- Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
+  // PWA Install prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const promptEl = document.getElementById('installPrompt');
+    if (promptEl) promptEl.style.display = 'block';
+  });
+
+  window.APP_INSTALL_PROMPT = () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+  };
+</script>
+</body>
+</html>
