@@ -1,6 +1,6 @@
 // Shawarmer IT — Global Config
 const APP_CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbw35cOVDQ7wjM2a93PceK9sDWw6ZVWAeVtCuYZKMz5dxXbgOwjExDzUkubF1oUNVJ69/exec",
+  API_URL: "https://script.google.com/macros/s/AKfycbzUi0jl2vAgBTxoMy4cP-ZdWtBC8VzrlNUSW8GZsE8iqj2icLZ-r1X9UM-Zo4zgoeB7/exec",
   VERSION: "6.1",
   BUILD: "2025.05.28",
   CACHE_SECONDS: 120,
