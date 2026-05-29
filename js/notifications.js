@@ -67,20 +67,4 @@ const NOTIF = {
       });
     });
   }
-
-
-  // Check for device status changes and notify
-  checkIssues(oldStores, newStores) {
-    if (!oldStores || !oldStores.length || !newStores || !newStores.length) return;
-    const devs = STATE.devList();
-    newStores.forEach(ns => {
-      const os = oldStores.find(s => String(s.id) === String(ns.id));
-      if (!os) return;
-      devs.forEach(d => {
-        if (os[d] === 1 && ns[d] === 0) {
-          const msg = `⚠️ ${d} issue at ${ns.branch}`;
-          NOTIF.add(msg, 'warn', ns.id);
-        }
-      });
-    });
-  },};
+};

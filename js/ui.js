@@ -287,7 +287,7 @@ const UI = {
     const start = (page - 1) * perPage;
     const slice = items.slice(start, start + perPage);
     return { slice, pages, total, page };
-  }
+  },
 
 
   // ── Missing helper methods (added for reports.js compatibility) ──
