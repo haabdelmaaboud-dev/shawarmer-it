@@ -45,7 +45,8 @@ const APP = {
 
  showScreen(name) {
  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
- document.getElementById("screen" + name.charAt(0).toUpperCase() + name.slice(1)).classList.remove("hidden");
+ const screenEl = document.getElementById("screen" + name.charAt(0).toUpperCase() + name.slice(1));
+ if (screenEl) screenEl.classList.remove("hidden");
 
  if (name === "loading") {
  this.animateLoader();
@@ -60,12 +61,21 @@ const APP = {
 
  const interval = setInterval(() => {
  step++;
- fill.style.width = (step * 25) + "%";
+ if (fill) fill.style.width = (step * 25) + "%";
  if (msg && messages[step - 1]) msg.textContent = messages[step - 1];
 
  if (step >= 4) {
  clearInterval(interval);
- setTimeout(() => this.init(), 300);
+ setTimeout(() => {
+    if (this.user) {
+      this.showScreen("app");
+      this.renderSidebar();
+      this.updateUserDisplay();
+      this.showTab(APP_CONFIG.LAST_TAB || "dashboard");
+    } else {
+      this.showScreen("login");
+    }
+ }, 300);
  }
  }, 400);
  },
@@ -76,21 +86,25 @@ const APP = {
  const errEl = document.getElementById("liErr");
  const btn = document.getElementById("loginBtn");
 
- errEl.textContent = "";
+ if (errEl) errEl.textContent = "";
 
  if (!username || !password) {
- errEl.textContent = "Please enter username and password";
+ if (errEl) errEl.textContent = "Please enter username and password";
  return;
  }
 
+ if (btn) {
  btn.disabled = true;
- btn.innerHTML = '<i class="icon-spinner spin"></i> Signing in…';
+ btn.innerHTML = '<i class="ti ti-spinner spin"></i> Signing in…';
+ }
 
  try {
  const result = await API.verifyLogin(username, password);
 
+ if (btn) {
  btn.disabled = false;
- btn.innerHTML = '<i class="icon-login"></i> Sign in';
+ btn.innerHTML = '<i class="ti ti-login"></i> Sign in';
+ }
 
  if (result.ok && result.user) {
  this.user = result.user;
@@ -100,12 +114,14 @@ const APP = {
 
  this.showScreen("loading");
  } else {
- errEl.textContent = result.error || "Incorrect username or password";
+ if (errEl) errEl.textContent = result.error || "Incorrect username or password";
  }
  } catch (err) {
+ if (btn) {
  btn.disabled = false;
- btn.innerHTML = '<i class="icon-login"></i> Sign in';
- errEl.textContent = "Network error. Please try again.";
+ btn.innerHTML = '<i class="ti ti-login"></i> Sign in';
+ }
+ if (errEl) errEl.textContent = "Network error. Please try again.";
  console.error("Login error:", err);
  }
  },
@@ -116,9 +132,14 @@ const APP = {
  localStorage.removeItem("shawarmer_user");
  localStorage.removeItem("shawarmer_token");
  this.showScreen("login");
- document.getElementById("liUser").value = "";
- document.getElementById("liPass").value = "";
- document.getElementById("liErr").textContent = "";
+ 
+ const uField = document.getElementById("liUser");
+ const pField = document.getElementById("liPass");
+ const eField = document.getElementById("liErr");
+ 
+ if (uField) uField.value = "";
+ if (pField) pField.value = "";
+ if (eField) eField.textContent = "";
  },
 
  showTab(tabId) {
@@ -134,11 +155,8 @@ const APP = {
  el.classList.toggle("active", el.dataset.tab === tabId);
  });
 
- document.querySelectorAll(".mobile-nav-item").forEach(el => {
- el.classList.toggle("active", el.dataset.tab === tabId);
- });
-
  const contentArea = document.getElementById("contentArea");
+ if (contentArea) {
  contentArea.innerHTML = "";
 
  switch(tabId) {
@@ -154,11 +172,14 @@ const APP = {
  case "profile": ProfileView.render(); break;
  default: DashboardView.render();
  }
+ }
 
  if (window.innerWidth < 1024) {
  this.sidebarOpen = false;
- document.getElementById("sidebar").classList.remove("open");
- document.getElementById("sidebarOverlay").classList.add("hidden");
+ const sidebar = document.getElementById("sidebar");
+ const overlay = document.getElementById("sidebarOverlay");
+ if (sidebar) sidebar.classList.remove("open");
+ if (overlay) overlay.classList.add("hidden");
  }
  },
 
@@ -176,7 +197,7 @@ const APP = {
 
  navEl.innerHTML = filtered.map(item => `
  <button class="nav-item" data-tab="${item.id}" onclick="APP.showTab('${item.id}')">
- <i class="icon-${item.icon}"></i>
+ <i class="${item.icon}"></i>
  <span>${item.label}</span>
  </button>
  `).join("");
@@ -188,8 +209,10 @@ const APP = {
 
  toggleSidebar() {
  this.sidebarOpen = !this.sidebarOpen;
- document.getElementById("sidebar").classList.toggle("open", this.sidebarOpen);
- document.getElementById("sidebarOverlay").classList.toggle("hidden", !this.sidebarOpen);
+ const sidebar = document.getElementById("sidebar");
+ const overlay = document.getElementById("sidebarOverlay");
+ if (sidebar) sidebar.classList.toggle("open", this.sidebarOpen);
+ if (overlay) overlay.classList.toggle("hidden", !this.sidebarOpen);
  },
 
  updateUserDisplay() {
@@ -204,14 +227,10 @@ const APP = {
  if (roleEl) roleEl.textContent = ROLE_LABELS[this.user.role] || this.user.role;
  if (avatarEl) avatarEl.textContent = (this.user.name || this.user.username || "U").charAt(0).toUpperCase();
 
- if (greetingEl) {
- const hour = new Date().getHours();
- let greeting = "Good Morning";
- if (hour >= 12) greeting = "Good Afternoon";
- if (hour >= 17) greeting = "Good Evening";
-
+ if (greetingEl && typeof UI !== 'undefined') {
+ const greeting = UI.greeting(this.user.name || this.user.username);
  greetingEl.innerHTML = `
- <div class="greeting-title">${greeting}, ${this.user.name || this.user.username}</div>
+ <div class="greeting-title">${greeting}</div>
  <div class="greeting-subtitle">Here's what's happening with your stores today.</div>
  `;
  }
@@ -223,7 +242,7 @@ const APP = {
  localStorage.setItem("shawarmer_theme", this.theme);
 
  const btn = document.getElementById("themeBtn");
- if (btn) btn.innerHTML = `<i class="icon-${this.theme === "light" ? "moon" : "sun"}"></i>`;
+ if (btn) btn.innerHTML = `<i class="ti ti-${this.theme === "light" ? "moon" : "sun"}"></i>`;
  },
 
  loadTheme() {
@@ -233,15 +252,14 @@ const APP = {
  },
 
  updateDate() {
- const now = new Date();
- const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
- const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
+ if (typeof UI !== 'undefined') {
+ const dateInfo = UI.formatDate();
  const dayEl = document.getElementById("dateDay");
  const weekdayEl = document.getElementById("dateWeekday");
 
- if (dayEl) dayEl.textContent = `${now.getDate()} ${months[now.getMonth()]}`;
- if (weekdayEl) weekdayEl.textContent = days[now.getDay()];
+ if (dayEl) dayEl.textContent = dateInfo.day;
+ if (weekdayEl) weekdayEl.textContent = dateInfo.weekday;
+ }
  },
 
  handleGlobalSearch(query) {
@@ -255,18 +273,19 @@ const APP = {
 
  if (results.length > 0) {
  this.showTab("stores");
- STORES.renderSearchResults(results);
+ if (typeof STORES !== 'undefined') STORES.renderSearchResults(results);
  }
  },
 
  async showNotifications() {
  const panel = document.getElementById("notifPanel");
+ if (!panel) return;
  panel.classList.toggle("hidden");
 
  if (!panel.classList.contains("hidden")) {
  try {
  const data = await API.getNotifications({ status: "pending", limit: 20 });
- NOTIF.renderPanel();
+ if (typeof NOTIF !== 'undefined') NOTIF.renderPanel();
  } catch (e) {
  console.error("Failed to load notifications", e);
  }
@@ -318,7 +337,7 @@ const APP = {
  quickAction() {
  if (this.user?.role === "engineer") {
  this.showTab("stores");
- setTimeout(() => STORES.showCheckModal(), 100);
+ if (typeof STORES !== 'undefined') setTimeout(() => STORES.showCheckModal(), 100);
  } else {
  this.showTab("stores");
  }
@@ -326,9 +345,11 @@ const APP = {
 
  startDay() {
  const btn = document.getElementById("startDayBtn");
- btn.innerHTML = '<i class="icon-check"></i> Day Started';
+ if (btn) {
+ btn.innerHTML = '<i class="ti ti-check"></i> Day Started';
  btn.disabled = true;
  btn.classList.add("btn-success");
+ }
 
  API.logAction("DAY_START", "Engineer started daily rounds");
  this.toast("Day started! Good luck with your rounds.", "success");
@@ -342,10 +363,11 @@ const APP = {
 
  toast(message, type = "info") {
  const stack = document.getElementById("toastStack");
+ if (!stack) return;
  const toast = document.createElement("div");
  toast.className = `toast toast-${type}`;
  toast.innerHTML = `
- <i class="icon-${type === 'success' ? 'check' : type === 'error' ? 'alert' : 'info'}"></i>
+ <i class="ti ti-${type === 'success' ? 'check' : type === 'error' ? 'alert-triangle' : 'info-circle'}"></i>
  <span>${message}</span>
  `;
 
@@ -358,6 +380,13 @@ const APP = {
  setTimeout(() => toast.remove(), 300);
  }, 3000);
  });
+ },
+
+ async loadData() {
+ try {
+ const res = await API.getDashboardSummary();
+ this.data.stores = res.stores || [];
+ } catch(e) { console.log("Data load warning", e); }
  },
 
  setupEventListeners() {
@@ -387,13 +416,16 @@ const APP = {
 };
 
 function closeModal() {
- document.getElementById("modalOverlay").classList.add("hidden");
- document.getElementById("modalBox").classList.remove("modal-show");
+ const overlay = document.getElementById("modalOverlay");
+ const box = document.getElementById("modalBox");
+ if (overlay) overlay.classList.add("hidden");
+ if (box) box.classList.remove("modal-show");
 }
 
 function handleOverlayClick(e) {
- if (e.target === document.getElementById("modalOverlay")) {
- closeModal();
+ const overlay = document.getElementById("modalOverlay");
+ if (overlay && e.target === overlay) {
+   closeModal();
  }
 }
 

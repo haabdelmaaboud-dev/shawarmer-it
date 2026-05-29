@@ -1,6 +1,6 @@
 // Shawarmer IT — Global Config
 const APP_CONFIG = {
-  API_URL: "https://script.google.com/macros/s/AKfycbzUi0jl2vAgBTxoMy4cP-ZdWtBC8VzrlNUSW8GZsE8iqj2icLZ-r1X9UM-Zo4zgoeB7/exec",
+  API_URL: "https://script.google.com/macros/s/AKfycbyE0qLtOJsEsiiMxv_pexE05mlGH_-gBQ0sLl6WpE0XiUmwLPBTnaDJsej8Ep5bDLF1/exec",
   VERSION: "6.1",
   BUILD: "2025.05.28",
   CACHE_SECONDS: 120,
@@ -8,7 +8,8 @@ const APP_CONFIG = {
   RETRY_DELAY: 1000,
   THEME: "light",
   SIDEBAR_COLLAPSED: false,
-  LAST_TAB: "dashboard"
+  LAST_TAB: "dashboard",
+  CRITICAL_DEVICES: ["Kitchen", "POS"] // تم إضافتها لحل مشكلة نظام الإشعارات
 };
 
 // Hash function (must match backend exactly)
@@ -45,14 +46,14 @@ const STATUS_CONFIG = {
 
 // Navigation
 const NAV_ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: "ti-layout-dashboard", roles: ["admin","engineer","area","ops"] },
-  { id: "stores",    label: "Stores",    icon: "ti-building-store",   roles: ["admin","engineer","area","ops"] },
-  { id: "critical",  label: "Critical",  icon: "ti-alert-triangle",   roles: ["admin","engineer","area","ops"] },
-  { id: "reports",   label: "Reports",   icon: "ti-chart-bar",        roles: ["admin","ops","area"] },
-  { id: "engineers", label: "Engineers", icon: "ti-users",            roles: ["admin","ops","area"] },
-  { id: "alerts",    label: "Alerts",    icon: "ti-bell",             roles: ["admin","engineer","area","ops"] },
-  { id: "auditlog",  label: "Audit Log", icon: "ti-file-text",        roles: ["admin"] },
-  { id: "history",   label: "History",   icon: "ti-history",          roles: ["admin"] },
-  { id: "admin",     label: "Admin",     icon: "ti-settings",         roles: ["admin"] },
-  { id: "profile",   label: "Profile",   icon: "ti-user",             roles: ["admin","engineer","area","ops"] }
+  { id: "dashboard", label: "Dashboard", icon: "ti ti-layout-dashboard", roles: ["admin","engineer","area","ops"] },
+  { id: "stores",    label: "Stores",    icon: "ti ti-building-store",   roles: ["admin","engineer","area","ops"] },
+  { id: "critical",  label: "Critical",  icon: "ti ti-alert-triangle",   roles: ["admin","engineer","area","ops"] },
+  { id: "reports",   label: "Reports",   icon: "ti ti-chart-bar",        roles: ["admin","ops","area"] },
+  { id: "engineers", label: "Engineers", icon: "ti ti-users",            roles: ["admin","ops","area"] },
+  { id: "alerts",    label: "Alerts",    icon: "ti ti-bell",             roles: ["admin","engineer","area","ops"] },
+  { id: "auditlog",  label: "Audit Log", icon: "ti ti-file-text",        roles: ["admin"] },
+  { id: "history",   label: "History",   icon: "ti ti-history",          roles: ["admin"] },
+  { id: "admin",     label: "Admin",     icon: "ti ti-settings",         roles: ["admin"] },
+  { id: "profile",   label: "Profile",   icon: "ti ti-user",             roles: ["admin","engineer","area","ops"] }
 ];

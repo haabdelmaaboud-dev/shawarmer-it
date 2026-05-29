@@ -3,6 +3,7 @@
    ===================================================== */
 const NOTIF = {
   updateBadge() {
+    if (typeof STATE === 'undefined') return;
     const cnt   = STATE.unreadCount();
     const badge = document.getElementById('notifBadge');
     if (badge) {
@@ -12,18 +13,19 @@ const NOTIF = {
   },
 
   add(msg, type, storeId) {
+    if (typeof STATE === 'undefined') return;
     const n = STATE.addNotification(msg, type, storeId);
     NOTIF.updateBadge();
     const toastType = type === 'critical' ? 'err' : type === 'warn' ? 'warn' : 'info';
-    UI.toast(msg, toastType);
+    if (typeof UI !== 'undefined') UI.toast(msg, toastType);
     return n;
   },
 
   renderPanel() {
     const list = document.getElementById('notifList');
-    if (!list) return;
+    if (!list || typeof STATE === 'undefined') return;
     const notifs = STATE.notifications;
-    if (!notifs.length) {
+    if (!notifs || !notifs.length) {
       list.innerHTML = '<div class="notif-empty"><i class="ti ti-bell-off"></i><p>No notifications</p></div>';
       return;
     }
@@ -38,6 +40,7 @@ const NOTIF = {
   },
 
   markRead(id) {
+    if (typeof STATE === 'undefined') return;
     const n = STATE.notifications.find(x => x.id === id);
     if (n) { n.read = true; localStorage.setItem('notifs', JSON.stringify(STATE.notifications)); }
     NOTIF.updateBadge();
@@ -45,23 +48,26 @@ const NOTIF = {
   },
 
   clearAll() {
+    if (typeof STATE === 'undefined') return;
     STATE.notifications = [];
     localStorage.setItem('notifs', '[]');
     NOTIF.updateBadge();
     NOTIF.renderPanel();
   },
 
-  // Check for new issues and notify
   checkIssues(oldStores, newStores) {
-    if (!oldStores.length) return;
+    if (typeof STATE === 'undefined' || !oldStores.length) return;
     const devs = STATE.devList();
+    
+    const criticalDevices = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.CRITICAL_DEVICES) ? APP_CONFIG.CRITICAL_DEVICES : [];
+
     newStores.forEach(ns => {
       const os = oldStores.find(s => String(s.id) === String(ns.id));
       if (!os) return;
       devs.forEach(d => {
         if (os[d] === 1 && ns[d] === 0) {
           const msg = `⚠️ ${d} issue at ${ns.branch}`;
-          const isCritical = CONFIG.CRITICAL_DEVICES.includes(d);
+          const isCritical = criticalDevices.includes(d);
           NOTIF.add(msg, isCritical ? 'critical' : 'warn', ns.id);
         }
       });
